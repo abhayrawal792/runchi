@@ -304,8 +304,7 @@
   <footer>Made with all my heart, just for you. ♡</footer>
 </div>
 
-<audio id="yesSound" src="yes.mp3" preload="auto"></audio>
-<audio id="noSound" src="no.mp3" preload="auto"></audio>
+
 
 <script>
   // background floating hearts
@@ -345,16 +344,44 @@
     }
   }
 
-  const yesAudio = document.getElementById('yesSound');
-  const noAudio = document.getElementById('noSound');
+  // ── Web Audio API sound engine (no external files needed) ──
+  const audioCtx = new (window.AudioContext || window.webkitAudioContext)();
 
-  function playSound(el){
-    // stop whichever sound is currently playing, then play the requested one
-    [yesAudio, noAudio].forEach(a=>{
-      if(a !== el){ a.pause(); a.currentTime = 0; }
+  function playYesSound(){
+    // Sweet ascending chime 🎵
+    const notes = [523.25, 659.25, 783.99, 1046.50]; // C5 E5 G5 C6
+    notes.forEach((freq, i) => {
+      const osc = audioCtx.createOscillator();
+      const gain = audioCtx.createGain();
+      osc.connect(gain); gain.connect(audioCtx.destination);
+      osc.type = 'sine';
+      osc.frequency.value = freq;
+      const t = audioCtx.currentTime + i * 0.12;
+      gain.gain.setValueAtTime(0, t);
+      gain.gain.linearRampToValueAtTime(0.35, t + 0.04);
+      gain.gain.exponentialRampToValueAtTime(0.001, t + 0.5);
+      osc.start(t); osc.stop(t + 0.5);
     });
-    el.currentTime = 0;
-    el.play().catch(()=>{});
+  }
+
+  function playNoSound(){
+    // Playful boing / dodge sound 🎵
+    const osc = audioCtx.createOscillator();
+    const gain = audioCtx.createGain();
+    osc.connect(gain); gain.connect(audioCtx.destination);
+    osc.type = 'sine';
+    osc.frequency.setValueAtTime(600, audioCtx.currentTime);
+    osc.frequency.exponentialRampToValueAtTime(200, audioCtx.currentTime + 0.25);
+    gain.gain.setValueAtTime(0.3, audioCtx.currentTime);
+    gain.gain.exponentialRampToValueAtTime(0.001, audioCtx.currentTime + 0.3);
+    osc.start(); osc.stop(audioCtx.currentTime + 0.3);
+  }
+
+  function playSound(type){
+    // Resume context if suspended (browser autoplay policy)
+    if(audioCtx.state === 'suspended') audioCtx.resume();
+    if(type === 'yes') playYesSound();
+    else playNoSound();
   }
 
   function goToNext(q){
@@ -373,7 +400,7 @@
   document.querySelectorAll('.btn-yes').forEach(btn=>{
     btn.addEventListener('click', ()=>{
       const q = parseInt(btn.dataset.q);
-      playSound(yesAudio);
+      playSound('yes');
       goToNext(q);
     });
   });
@@ -405,7 +432,7 @@
       if(dist < DODGE_RADIUS){
         if(!state.fleeing){
           state.fleeing = true;
-          playSound(noAudio);
+          playSound('no');
         }
         fleeFrom(btn, e.clientX, e.clientY);
       } else if(state.fleeing && dist > DODGE_RADIUS * 1.6){
