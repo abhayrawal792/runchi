@@ -1,0 +1,500 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Happy Birthday, Runchi 🎂</title>
+<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,500;0,700;1,600&family=Poppins:wght@300;400;500;600&display=swap" rel="stylesheet">
+<style>
+  :root{
+    --blush:#fdf0f0;
+    --pink-light:#fbdada;
+    --pink-mid:#f3a9b3;
+    --maroon:#8c1c2b;
+    --maroon-dark:#6e1420;
+    --text-dark:#5a2a30;
+    --white:#fffaf9;
+  }
+  *{box-sizing:border-box;}
+  body{
+    margin:0;
+    min-height:100vh;
+    font-family:'Poppins',sans-serif;
+    background:
+      radial-gradient(circle at 15% 20%, rgba(255,255,255,0.6), transparent 40%),
+      radial-gradient(circle at 85% 80%, rgba(255,255,255,0.5), transparent 40%),
+      linear-gradient(160deg, var(--blush) 0%, var(--pink-light) 60%, #f7d9de 100%);
+    color:var(--text-dark);
+    overflow-x:hidden;
+    position:relative;
+  }
+  .hearts-bg{
+    position:fixed; inset:0; pointer-events:none; z-index:0; overflow:hidden;
+  }
+  .hearts-bg span{
+    position:absolute;
+    font-size:1.4rem;
+    opacity:.35;
+    animation:float 9s ease-in-out infinite;
+  }
+  @keyframes float{
+    0%,100%{ transform:translateY(0) rotate(0deg); }
+    50%{ transform:translateY(-25px) rotate(8deg); }
+  }
+  .wrap{
+    position:relative; z-index:1;
+    max-width:760px; margin:0 auto;
+    padding:70px 24px 100px;
+    text-align:center;
+  }
+  h1{
+    font-family:'Playfair Display', serif;
+    font-style:italic;
+    font-weight:700;
+    color:var(--maroon);
+    font-size:clamp(2.4rem, 6vw, 3.6rem);
+    margin:0 0 6px;
+  }
+  .sub{
+    font-size:1.05rem;
+    color:var(--text-dark);
+    opacity:.75;
+    margin-bottom:60px;
+    letter-spacing:.3px;
+  }
+  /* Main button */
+  #openBtn{
+    background:linear-gradient(145deg, var(--maroon) 0%, var(--maroon-dark) 100%);
+    color:#fff8f6;
+    border:none;
+    padding:22px 44px;
+    font-size:1.15rem;
+    font-family:'Poppins',sans-serif;
+    font-weight:500;
+    letter-spacing:.4px;
+    border-radius:50px;
+    cursor:pointer;
+    box-shadow:0 10px 30px rgba(140,28,43,0.35);
+    transition:transform .25s ease, box-shadow .25s ease;
+  }
+  #openBtn:hover{
+    transform:translateY(-3px) scale(1.03);
+    box-shadow:0 14px 36px rgba(140,28,43,0.45);
+  }
+
+  /* card */
+  .card{
+    background:rgba(255,255,255,0.75);
+    backdrop-filter:blur(6px);
+    border:1px solid rgba(255,255,255,0.6);
+    border-radius:28px;
+    padding:50px 36px;
+    margin-top:10px;
+    box-shadow:0 20px 50px rgba(140,28,43,0.12);
+    display:none;
+    position:relative;
+    min-height:260px;
+    overflow:hidden;
+  }
+  .card.show{ display:block; animation:pop .4s ease; }
+  @keyframes pop{
+    from{ opacity:0; transform:scale(.92) translateY(10px); }
+    to{ opacity:1; transform:scale(1) translateY(0); }
+  }
+  .q-text{
+    font-family:'Playfair Display', serif;
+    font-size:clamp(1.4rem, 3.4vw, 1.9rem);
+    color:var(--maroon-dark);
+    margin-bottom:38px;
+    font-weight:600;
+  }
+  .options{
+    display:flex;
+    justify-content:center;
+    align-items:center;
+    gap:26px;
+    flex-wrap:nowrap;
+    position:relative;
+    min-height:120px;
+    padding:0 10px;
+  }
+  .btn{
+    padding:16px 34px;
+    font-size:1.05rem;
+    border-radius:40px;
+    border:none;
+    cursor:pointer;
+    font-family:'Poppins',sans-serif;
+    font-weight:500;
+    transition:transform .15s ease, box-shadow .2s ease;
+  }
+  .btn-yes{
+    background:linear-gradient(145deg, var(--maroon), var(--maroon-dark));
+    color:#fff;
+    box-shadow:0 8px 22px rgba(140,28,43,.3);
+  }
+  .btn-yes:hover{ transform:translateY(-2px) scale(1.05); }
+  .btn-no{
+    background:#fff;
+    color:var(--maroon);
+    border:2px solid var(--pink-mid);
+    position:relative;
+    z-index:2;
+    transition: transform .22s cubic-bezier(.34,1.56,.64,1), left .22s ease-out, top .22s ease-out;
+  }
+  .btn-no.dodging{
+    transform:scale(1.05) rotate(var(--wiggle, 6deg));
+  }
+
+  .progress-dots{
+    display:flex; gap:8px; justify-content:center; margin-bottom:26px;
+  }
+  .dot{
+    width:8px; height:8px; border-radius:50%;
+    background:var(--pink-light);
+    transition:background .3s ease, transform .3s ease;
+  }
+  .dot.active{ background:var(--maroon); transform:scale(1.3); }
+
+  /* Finale */
+  .finale{
+    display:none;
+  }
+  .finale.show{ display:block; animation:pop .5s ease; }
+  .finale h2{
+    font-family:'Playfair Display', serif;
+    font-style:italic;
+    color:var(--maroon);
+    font-size:clamp(1.8rem, 4.5vw, 2.4rem);
+    margin-bottom:20px;
+  }
+  .finale p{
+    font-size:1.15rem;
+    line-height:1.9;
+    color:var(--text-dark);
+    max-width:480px;
+    margin:0 auto;
+  }
+  .finale .heart-icon{
+    font-size:2.2rem;
+    margin-bottom:10px;
+    display:block;
+  }
+
+  /* flower burst */
+  .flower-shower{
+    position:fixed; inset:0; pointer-events:none; z-index:50; overflow:hidden;
+  }
+  .petal{
+    position:absolute;
+    font-size:1.8rem;
+    left:0; top:0;
+    opacity:1;
+    animation:burst 1.1s cubic-bezier(.2,.8,.3,1) forwards;
+  }
+  @keyframes burst{
+    0%{
+      transform:translate(0,0) scale(0.3) rotate(0deg);
+      opacity:1;
+    }
+    70%{
+      opacity:1;
+    }
+    100%{
+      transform:translate(var(--dx), var(--dy)) scale(1.1) rotate(var(--rot));
+      opacity:0;
+    }
+  }
+
+  footer{
+    margin-top:70px;
+    font-size:.95rem;
+    color:var(--maroon);
+    opacity:.6;
+  }
+
+  @media (prefers-reduced-motion: reduce){
+    .btn-no{ transition:none; }
+    .hearts-bg span{ animation:none; }
+  }
+</style>
+</head>
+<body>
+
+<div class="hearts-bg" id="heartsBg"></div>
+
+<div class="wrap">
+  <h1>Happy Birthday, Runchi! 🎂</h1>
+  <p class="sub">A little something made just for you 💗</p>
+
+  <button id="openBtn">Few Questions For You</button>
+
+  <div class="card" id="quizCard">
+    <div class="progress-dots" id="dots"></div>
+
+    <!-- Question 1 -->
+    <div class="question" id="q1">
+      <p class="q-text">Are you my girlfriend?</p>
+      <div class="options">
+        <button class="btn btn-no" data-q="1" data-ans="no">No</button>
+        <button class="btn btn-yes" data-q="1" data-ans="yes">Yes, obviously</button>
+      </div>
+    </div>
+
+    <!-- Question 2 -->
+    <div class="question" id="q2" style="display:none;">
+      <p class="q-text">Do you think about me randomly during the day?</p>
+      <div class="options">
+        <button class="btn btn-no" data-q="2" data-ans="no">No</button>
+        <button class="btn btn-yes" data-q="2" data-ans="yes">All the time</button>
+      </div>
+    </div>
+
+    <!-- Question 3 -->
+    <div class="question" id="q3" style="display:none;">
+      <p class="q-text">Do you think I'm a little annoying sometimes?</p>
+      <div class="options">
+        <button class="btn btn-no" data-q="3" data-ans="no">No</button>
+        <button class="btn btn-yes" data-q="3" data-ans="yes">Yes, but I love you anyway</button>
+      </div>
+    </div>
+
+    <!-- Question 4 -->
+    <div class="question" id="q4" style="display:none;">
+      <p class="q-text">Do you love me?</p>
+      <div class="options">
+        <button class="btn btn-no" data-q="4" data-ans="no">No</button>
+        <button class="btn btn-yes" data-q="4" data-ans="yes">Yes</button>
+      </div>
+    </div>
+
+    <!-- Finale -->
+    <div class="finale" id="finale">
+      <span class="heart-icon">🎂</span>
+      <h2>Happy Birthday, My Runchi! 🥳</h2>
+      <p>
+        Runchiii... I am <em>so, so, so</em> sorry for every single time I hurt you.
+        I know I mess up sometimes, and I hate myself for it every time,
+        because you deserve nothing but the absolute best — always. 💔➡️💗
+      </p>
+      <p>
+        But please know this with every beat of my heart —
+        I love you <strong>soooooo sooooooo sooooooo much</strong>,
+        more than any words could ever say.
+        You are my favourite person in this entire world,
+        and I will love you forever and ever and ever. 🌍❤️
+      </p>
+      <p>
+        You are my safe place, my happy place, my everything.
+        No matter what, I will always choose you — today, tomorrow,
+        and every single day after that. 🥺💕
+      </p>
+      <p>
+        On your birthday, I just want you to feel how deeply, truly,
+        madly loved you are. You are irreplaceable. You are my person.
+        I promise to be better, to love you harder, and to make you
+        smile every single day. 🎂✨
+      </p>
+      <p style="font-weight:600; margin-top:18px;">
+        Happy Birthday, my Runchi. Here's to you — my favourite, forever. 💗🎉
+      </p>
+    </div>
+  </div>
+
+  <footer>Made with all my heart, just for you. ♡</footer>
+</div>
+
+<audio id="yesSound" src="yes.mp3" preload="auto"></audio>
+<audio id="noSound" src="no.mp3" preload="auto"></audio>
+
+<script>
+  // background floating hearts
+  const heartsBg = document.getElementById('heartsBg');
+  const heartEmojis = ['💗','🌸','♡','🌷'];
+  for(let i=0;i<14;i++){
+    const s = document.createElement('span');
+    s.textContent = heartEmojis[Math.floor(Math.random()*heartEmojis.length)];
+    s.style.left = Math.random()*100+'%';
+    s.style.top = Math.random()*100+'%';
+    s.style.animationDelay = (Math.random()*6)+'s';
+    s.style.animationDuration = (7+Math.random()*5)+'s';
+    heartsBg.appendChild(s);
+  }
+
+  const openBtn = document.getElementById('openBtn');
+  const quizCard = document.getElementById('quizCard');
+  const dotsWrap = document.getElementById('dots');
+  const totalQ = 4;
+  let current = 1;
+
+  for(let i=1;i<=totalQ;i++){
+    const d = document.createElement('div');
+    d.className = 'dot' + (i===1 ? ' active' : '');
+    d.id = 'dot'+i;
+    dotsWrap.appendChild(d);
+  }
+
+  openBtn.addEventListener('click', ()=>{
+    quizCard.classList.add('show');
+    openBtn.style.display = 'none';
+  });
+
+  function updateDots(n){
+    for(let i=1;i<=totalQ;i++){
+      document.getElementById('dot'+i).classList.toggle('active', i===n);
+    }
+  }
+
+  const yesAudio = document.getElementById('yesSound');
+  const noAudio = document.getElementById('noSound');
+
+  function playSound(el){
+    // stop whichever sound is currently playing, then play the requested one
+    [yesAudio, noAudio].forEach(a=>{
+      if(a !== el){ a.pause(); a.currentTime = 0; }
+    });
+    el.currentTime = 0;
+    el.play().catch(()=>{});
+  }
+
+  function goToNext(q){
+    document.getElementById('q'+q).style.display = 'none';
+    if(q < totalQ){
+      current = q+1;
+      document.getElementById('q'+current).style.display = 'block';
+      updateDots(current);
+    } else {
+      quizCard.querySelector('.progress-dots').style.display = 'none';
+      document.getElementById('finale').classList.add('show');
+      launchFlowers();
+    }
+  }
+
+  document.querySelectorAll('.btn-yes').forEach(btn=>{
+    btn.addEventListener('click', ()=>{
+      const q = parseInt(btn.dataset.q);
+      playSound(yesAudio);
+      goToNext(q);
+    });
+  });
+
+  // dodge behaviour for "No" buttons — flees from the cursor in real time
+  // (tracked continuously via mousemove), so the cursor can never actually land on it
+  const DODGE_RADIUS = 110; // px — how close the cursor can get before it flees
+  const fleeState = new Map();
+
+  document.querySelectorAll('.btn-no').forEach(btn=>{
+    fleeState.set(btn, { fleeing:false });
+  });
+
+  document.addEventListener('mousemove', (e)=>{
+    document.querySelectorAll('.btn-no').forEach(btn=>{
+      const card = btn.closest('.card');
+      if(!card || getComputedStyle(card).display === 'none') return;
+
+      const bRect = btn.getBoundingClientRect();
+      const cx = bRect.left + bRect.width/2;
+      const cy = bRect.top + bRect.height/2;
+
+      const dx = cx - e.clientX;
+      const dy = cy - e.clientY;
+      const dist = Math.sqrt(dx*dx + dy*dy);
+
+      const state = fleeState.get(btn);
+
+      if(dist < DODGE_RADIUS){
+        if(!state.fleeing){
+          state.fleeing = true;
+          playSound(noAudio);
+        }
+        fleeFrom(btn, e.clientX, e.clientY);
+      } else if(state.fleeing && dist > DODGE_RADIUS * 1.6){
+        state.fleeing = false;
+        btn.classList.remove('dodging');
+        btn.style.left = '0px';
+        btn.style.top = '0px';
+      }
+    });
+  });
+
+  function fleeFrom(btn, cursorX, cursorY){
+    const card = document.getElementById('quizCard');
+    const cardRect = card.getBoundingClientRect();
+    const bRect = btn.getBoundingClientRect();
+    const padding = 20;
+
+    const currentLeft = parseFloat(btn.style.left) || 0;
+    const currentTop = parseFloat(btn.style.top) || 0;
+
+    // neutral (un-offset) position of the button
+    const neutralLeft = bRect.left - currentLeft;
+    const neutralTop = bRect.top - currentTop;
+
+    const minX = (cardRect.left + padding) - neutralLeft;
+    const maxX = (cardRect.right - padding - bRect.width) - neutralLeft;
+    const minY = (cardRect.top + padding) - neutralTop;
+    const maxY = (cardRect.bottom - padding - bRect.height) - neutralTop;
+
+    const cx = bRect.left + bRect.width/2;
+    const cy = bRect.top + bRect.height/2;
+
+    // direction away from the cursor
+    let dx = cx - cursorX;
+    let dy = cy - cursorY;
+    const len = Math.sqrt(dx*dx + dy*dy) || 1;
+    dx /= len; dy /= len;
+
+    // a little randomness so it doesn't feel robotic
+    dx += (Math.random()-0.5)*0.4;
+    dy += (Math.random()-0.5)*0.4;
+
+    const jump = 130;
+    let newX = currentLeft + dx*jump;
+    let newY = currentTop + dy*jump;
+
+    newX = Math.max(minX, Math.min(newX, maxX));
+    newY = Math.max(minY, Math.min(newY, maxY));
+
+    const wiggle = (Math.random() > 0.5 ? 1 : -1) * (4 + Math.random()*6);
+    btn.style.setProperty('--wiggle', wiggle + 'deg');
+    btn.classList.add('dodging');
+    btn.style.left = newX + 'px';
+    btn.style.top = newY + 'px';
+  }
+
+  function launchFlowers(){
+    const shower = document.createElement('div');
+    shower.className = 'flower-shower';
+    document.body.appendChild(shower);
+
+    const emojis = ['🌸','🌺','🌷','💐','🌼','💮'];
+    const originX = window.innerWidth / 2;
+    const originY = window.innerHeight / 2;
+    const count = 40;
+
+    for(let i=0;i<count;i++){
+      const petal = document.createElement('span');
+      petal.className = 'petal';
+      petal.textContent = emojis[Math.floor(Math.random()*emojis.length)];
+
+      const angle = Math.random() * Math.PI * 2;
+      const distance = 160 + Math.random() * 260;
+      const dx = Math.cos(angle) * distance;
+      const dy = Math.sin(angle) * distance - 60; // slight upward bias
+
+      petal.style.left = originX + 'px';
+      petal.style.top = originY + 'px';
+      petal.style.setProperty('--dx', dx + 'px');
+      petal.style.setProperty('--dy', dy + 'px');
+      petal.style.setProperty('--rot', (Math.random()*720 - 360) + 'deg');
+      petal.style.animationDelay = (Math.random()*0.15) + 's';
+
+      shower.appendChild(petal);
+    }
+
+    setTimeout(()=>{ shower.remove(); }, 1600);
+  }
+</script>
+
+</body>
+</html>
